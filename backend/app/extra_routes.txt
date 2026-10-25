@@ -1,0 +1,9 @@
+# Add this endpoint inside backend/app/main.py before the exception handler.
+# The frontend uploads to POST /api/projects/extract. This block is provided as a
+# patch reference; the complete main.py already includes extract_upload().
+@app.post("/api/projects/extract")
+async def extract_project_specification(file: UploadFile = File(...)):
+    text = await extract_upload(file)
+    if not text.strip():
+        raise HTTPException(422, "No readable text was found in this file")
+    return {"filename": file.filename, "text": text}
